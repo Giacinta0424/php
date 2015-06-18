@@ -1,0 +1,35 @@
+PHP
+1. 如何在程序中修改php配置
+	a. 直接修改php.ini 中配置项信息，重启服务器。
+	b. 在.htaccess 中添加需要修改的php参数值
+		php_value 配置参数 参数值
+	c. 通过php函数设置
+		ini_set("配置参数","参数值")；设置指定配置选项的值。这个函数会在脚本运行时保持新的值，并且在脚本结束时恢复
+		ini_get("配置参数");
+		ini_restore("配置参数"); 恢复指定的配置选项到它的原始值。
+	d. 通过.user.ini 修改
+	虽然可以通过以上方式来修改参数，但是并不是所有的参数都能使用以上四个方法。
+	事例：ini_set(“upload_max_filesize”,“200M”) not working in php [duplicate]
+	有时候我们无法登录服务器修改php或者apache配置。可以通过其他途径修改配置信息
+	这是因为每一个配置参数都有一个允许设置的级别。
+	这些可能级别包括：
+		PHP_INI_USER----指令可以在用户脚本中修改
+		PHP_INI_PREDIR----指令可以在php.ini、httpd.conf或.htaccess文件中修改
+		PHP_INI_SYSTEM----指令可以在php.ini和httpd.conf文件中修改
+		PHP_INI_ALL----指令可以在认可地方中修改
+		除了PHP_INI_SYSTEM级别之外的参数都可以使用.user.ini修改
+	补充知识
+		.user.ini
+		官方解释: 除了主php.ini之外, php还会在每个目录下扫描INI文件，从被执行的PHP文件所在的目录开始一直上升到web根目录($_SERVER['DOCUMENT_ROOT']所指定的)。如果被执行的PHP文件在web根目录之外，则至扫描该目录
+		在.user.ini风格的INI文件中只有具有PHP_INI_PREDIR 和 PHP_INI_USER 的模式可以被识别。
+		.user.ini实际上就是一个可以由用户"自定义"的php.ini, 我能够自定义的是指级别为"PHP_INI_PREDIR"与"PHP_INI_USER"的设置。其实除了"PHP_INI_SYSTEM"以外的模式都可以设置的.
+		与php.ini不同的是, .user.ini是一个能被动态加载的ini文件。也就是修改了 .user.ini 后，不需要重启服务器中间件，只需要等待user_ini.cache_ttl 所设置的时间(默认300秒)，就可以被重新加载。
+		详见参数可以参考PHP手册：
+			http://php.net/manual/zh/ini.list.php
+			http://php.net/manual/zh/configuration.changes.modes.php
+			http://php.net/manual/zh/configuration.file.per-user.php
+			http://php.net/manual/zh/configuration.changes.php
+	eg: 
+	memory_limit = 128M
+	upload_max_filesize = 20M
+	post_max_size = 50M
