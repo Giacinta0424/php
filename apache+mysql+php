@@ -1,0 +1,52 @@
+Windows
+wamp
+1. 安装成功后修改端口号	
+	http.conf   80 修改成  8088 重启wampserver服务器
+	同时修改wamp目录下wampmanager.tpl 
+	找到
+		Parameters: "http://localhost/"; Glyph: 5
+		Parameters: "http://localhost/phpmyadmin/"; Glyph: 5 
+	修改成
+		Parameters: "http://localhost:8088/"; Glyph: 5
+		Parameters: "http://localhost:8088/phpmyadmin/"; Glyph: 5 
+
+2. 重新修改www指向目录
+	httpd.conf 
+		DocumentRoot "c:/wamp/www/" 修改成制定的www目录
+		<Directory "c:/wamp/www/"> 修改成指定的www目录
+	wamp\script\config.inc.php
+		$wwwDir 修改成指定的 目录
+
+3. 修改数据库密码
+	通过wamp进入mysql控制台
+		use mysql;
+		update user set password=PASSWORD(admin123) where user='root';
+		flush privileges;
+		quit;
+	修改phpmyadmin数据酷设置，否则不同使用phpmyadmin功能
+		phpmyadmin/config.inc.php
+		修改用户名密码
+
+4. 配置虚拟主机
+	虚拟主机运行需要开启httpd-vhosts.conf配置文件和重新加载路由重写规则rewrite_module
+		在apache配置文件httpd.conf中
+			找到#Include conf/extra/httpd-vhosts.conf去掉#号
+			找到#LoadModule rewrite_module modules/mod_rewrite.so去掉#号
+			修改AllowOverride none 为     AllowOverride all
+	httpd-vhost.conf 中添加
+		<VirtualHost *:8088>
+		    DocumentRoot "E:/www/Project/brazil"
+		    ServerName brazil.local
+		    ErrorLog "logs/dummy-host2.example.com-error.log"
+		    CustomLog "logs/dummy-host2.example.com-access.log" common
+
+		    <Directory "E:/www/Project/brazil">
+		        Options Indexes FollowSymLinks
+		        AllowOverride all
+		        Order allow,deny
+		        Allow from all
+		    </Directory>
+		</VirtualHost>
+
+Linux
+
